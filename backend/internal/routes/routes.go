@@ -16,6 +16,7 @@ func SetupRouter(router *gin.Engine, services *service.Services) {
 		usersApi := apiV1.Group("/users")
 		{
 			usersApi.POST("/", handler.UserHandler.CreateUser)
+			usersApi.GET("/:userId", handler.GetUserByID)
 		}
 	}
 

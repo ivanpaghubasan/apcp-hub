@@ -64,7 +64,7 @@ func (r *UserRepository) CreateUserAndAccount(ctx context.Context, user *model.U
 
 func (r *UserRepository) GetAccountByUsername(ctx context.Context, username string) (*model.Account, error) {
 	var account model.Account
-	query := `SELECT * FROM accounts WHERE useranme = $1`
+	query := `SELECT * FROM accounts WHERE username = $1`
 	err := r.db.GetContext(ctx, &account, query, username)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -74,4 +74,17 @@ func (r *UserRepository) GetAccountByUsername(ctx context.Context, username stri
 	}
 
 	return &account, nil
+}
+
+func (r *UserRepository) GetUserByID(ctx context.Context, userID string) (*model.User, error) {
+	var user model.User
+	query := `SELECT * FROM users WHERE user_id = $1`
+	err := r.db.GetContext(ctx, &user, query, userID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, constants.ErrNotFound
+		}
+		return nil, fmt.Errorf("failed to get account by username: %w", err)
+	}
+	return &user, nil
 }

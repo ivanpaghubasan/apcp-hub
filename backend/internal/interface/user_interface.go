@@ -9,4 +9,5 @@ import (
 type UserRepository interface {
 	CreateUserAndAccount(ctx context.Context, user *model.User, account *model.Account) (*model.User, error)
 	GetAccountByUsername(ctx context.Context, username string) (*model.Account, error)
+	GetUserByID(ctx context.Context, userID string) (*model.User, error)
 }

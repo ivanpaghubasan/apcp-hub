@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/ivanpaghubasan/apcp-hub-backend/internal/constants"
 	"github.com/ivanpaghubasan/apcp-hub-backend/internal/model"
@@ -23,10 +24,9 @@ func NewUserService(userRepo repository.UserRepository) UserService {
 func (s *UserService) CreateUser(ctx context.Context, req structs.CreateUserRequest) (*structs.CreateUserResponse, error) {
 	result, err := s.userRepo.GetAccountByUsername(ctx, req.Username)
 	if err != nil {
-		if errors.Is(err, constants.ErrNotFound) {
-			return nil, fmt.Errorf("username '%s' not found", req.Username)
+		if !errors.Is(err, constants.ErrNotFound) {
+			return nil, err
 		}
-		return nil, err
 	}
 
 	if result != nil {
@@ -38,11 +38,20 @@ func (s *UserService) CreateUser(ctx context.Context, req structs.CreateUserRequ
 		return nil, fmt.Errorf("failed to hash password: %w", err)
 	}
 
+	var dateOfBirth *time.Time
+	if req.DateOfBirth != "" {
+		t, err := time.Parse("2006-01-02", req.DateOfBirth)
+		if err != nil {
+			return nil, fmt.Errorf("invalid date of birth format: %w", err)
+		}
+		dateOfBirth = &t
+	}
+
 	user := &model.User{
 		FirstName:    req.FirstName,
 		LastName:     req.LastName,
-		DateOfBirth:  req.DateOfBirth,
 		MobileNumber: req.MobileNumber,
+		DateOfBirth:  dateOfBirth,
 		Gender:       req.Gender,
 		Position:     req.Position,
 		Status:       "active",
@@ -63,4 +72,8 @@ func (s *UserService) CreateUser(ctx context.Context, req structs.CreateUserRequ
 		UserID:  createdUser.ID.String(),
 		Message: "User and account created successfully!",
 	}, nil
+}
+
+func (s *UserService) GetUserByID(ctx context.Context, userID string) (*model.User, error) {
+	return s.userRepo.GetUserByID(ctx, userID)
 }
