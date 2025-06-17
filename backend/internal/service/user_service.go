@@ -20,7 +20,7 @@ func NewUserService(userRepo repository.UserRepository) UserService {
 	return UserService{userRepo: userRepo}
 }
 
-func (s *UserService) CreateUser(ctx context.Context, req *structs.CreateUserRequest) (*structs.CreateUserResponse, error) {
+func (s *UserService) CreateUser(ctx context.Context, req structs.CreateUserRequest) (*structs.CreateUserResponse, error) {
 	result, err := s.userRepo.GetAccountByUsername(ctx, req.Username)
 	if err != nil {
 		if errors.Is(err, constants.ErrNotFound) {

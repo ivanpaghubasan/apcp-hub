@@ -12,6 +12,11 @@ func SetupRouter(router *gin.Engine, services *service.Services) {
 	apiV1 := router.Group("/v1")
 	{
 		apiV1.GET("/health", handler.CheckHealth)
+
+		usersApi := apiV1.Group("/users")
+		{
+			usersApi.POST("/", handler.UserHandler.CreateUser)
+		}
 	}
 
 }
