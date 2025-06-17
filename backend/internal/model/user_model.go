@@ -1,4 +1,4 @@
-package domain
+package model
 
 import (
 	"time"
@@ -18,6 +18,3 @@ type User struct {
 	CreatedAt    time.Time  `db:"created_at" json:"createdAt"`
 	UpdatedAt    time.Time  `db:"updated_at" json:"updatedAt"`
 }
-
-
-
